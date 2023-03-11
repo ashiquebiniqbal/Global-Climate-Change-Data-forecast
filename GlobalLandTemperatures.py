@@ -3,12 +3,9 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
 
 # Load and preprocess the data
-data = pd.read_csv('https://query.data.world/s/olpn7psujs42yebkm7v2xsgxnpnsnz')
-data['dt'] = pd.to_datetime(data['dt'])
-data.set_index('dt', inplace=True)
-data = data[['AverageTemperature']].resample('MS').mean().dropna()
-
-# Add lag features
+data = pd.read_csv('https://raw.githubusercontent.com/ashiquebiniqbal/Global-Climate-Change-Data-forecsat/main/GlobalLandTemperatures.csv', parse_dates=['dt'])
+data = data[['dt', 'AverageTemperature']].groupby('dt').mean().resample('MS').mean().reset_index().dropna()
+data = data.set_index('dt')
 for i in range(1, 13):
     data[f't_{i}'] = data['AverageTemperature'].shift(i)
 
